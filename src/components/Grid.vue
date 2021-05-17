@@ -7,6 +7,7 @@
       @before-enter="beforeEnter"
       @enter="enter"
       > -->
+      <!-- <div>{{grid}}</div> -->
     <div
         class="cell"
         v-for="cell in grid.cells"
@@ -23,20 +24,20 @@
   <!-- </transition-group> -->
   </div>
   <br>
-  <!-- <div class="message" > -->
-  <h1 :class="loadingStates.solving ? solvingStyle : notSolvingStyle" :key="messageUpdater">
-    solving...
+  <div class="message" >
+  <h1 :class="loading ? solvingStyle : notSolvingStyle" :key="messageUpdater">
+    solving for x
   </h1>
   <p v-if="notPossible">
     not solvable :(
   </p>
-  <!-- </div> -->
+  </div>
   <hr>
   <br>
 
   <button @click="solveMaze">solve</button>
   <button @click="notPossible = !notPossible">possible?</button>
-  <button @click="loadingStates.solving = !loadingStates.solving">sloving?</button>
+  <button @click="toggleLoading">sloving?</button>
     <!-- <label for="width" >
       enter a maze width
       <input type="number" name="width" ref="heightinput">
@@ -47,15 +48,11 @@
       <input type="number" name="height" ref="heightinput">
     </label> -->
     <!-- <button @click="submitMazeDimensions"></button> -->
-    <button @click="width++">increase width: {{ grid.width }}</button>
-    <button @click="height++">increase height: {{ grid.height }}</button>
-    <!-- <button @click="width--">decrease width: {{ width }}</button> -->
 </template>
 
 <script>
-import {  reactive, toRef } from 'vue'
+import { toRef } from 'vue'
 import Cell from '../utils/Cell'
-import Solver from '../utils/solver'
 
 export default {
   name: 'Grid',
@@ -77,21 +74,19 @@ export default {
       return {
         '--grid-width': `repeat(${this.grid.width}, minmax(0, 1fr))`,
         '--grid-height': `repeat(${this.grid.height}, minmax(0, 1fr))`,
-
       }
     },
     loading() {
-      return this.solving
+      return this.$store.state.isSolving
     },
-    cells() {
-      return this.grid.cells
-    }
+    grid() {
+      return this.$store.state.grid
+    },
   },
   setup: () => {
     const width = 50
     const height = 50;
     var count = 0
-    const loadingStates = reactive({solving: false})
     let setCells = () => {
       let cells=[];
       for(let i=0;i<height;i++) {
@@ -104,8 +99,6 @@ export default {
       }
       return cells
     }
-
-    let cells = setCells()
 
     let findStartAndEnd = (cells) => {
       let edgeCells = cells.filter(
@@ -130,24 +123,33 @@ export default {
       return [startCell, endCell];
     };
 
-    let [startCell, endCell] = findStartAndEnd(cells)
-    let grid = reactive({width: width, height: height, startCell: startCell, endCell: endCell, cells: cells })
-    return { grid, findStartAndEnd, setCells, loadingStates }
+    // let [startCell, endCell] = findStartAndEnd(cells)
+    // let grid = reactive({width: width, height: height, startCell: startCell, endCell: endCell, cells: cells })
+    return {  findStartAndEnd, setCells }
   },
   mounted: function() {
-    let gsapScript = document.createElement('script');
-    gsapScript.setAttribute('src', "https://cdnjs.cloudflare.com/ajax/libs/gsap/3.3.4/gsap.min.js")
-    document.head.appendChild(gsapScript)
-    },
-    
+
+    // let gsapScript = document.createElement('script');
+    // gsapScript.setAttribute('src', "https://cdnjs.cloudflare.com/ajax/libs/gsap/3.3.4/gsap.min.js")
+    // document.head.appendChild(gsapScript)
+    // let height = this.height
+    // let width = this.width
+    // let cells = this.setCells()
+    // let [startCell, endCell] = this.findStartAndEnd(cells)
+    // let grid = {width: width, height: height, startCell: startCell, endCell: endCell, cells: cells }
+    // this.$store.commit('solve', grid)
+    // console.log(this.$store.state)
+  },  
   updated: function() {
     console.log('updated')
   },
   methods: {
+    toggleLoading: function() {
+      this.$store.state.isSolving ? this.$store.commit('stopSolving') : this.$store.commit('startSolving')
+    },
     callSolver: async function() {
       let solving = toRef(this.loadingStates, 'solving')
       solving.value = true
-      console.log(this.loadingStates.solving)
       this.messageUpdater++
       this.$forceUpdate()
       // insert here
@@ -158,24 +160,38 @@ export default {
       }
 
       solving.value = false
-      console.log(this.loadingStates.solving)
+      
     },
-    solveMaze: async function() {
-      this.loadingStates.solving = true
-      let s = new Solver({
-        width: this.grid.width,
-        height: this.grid.height, 
-        cells: this.grid.cells, 
-        start: this.grid.startCell, 
-        end: this.grid.endCell
+    solveMaze: function() {
+      // this.$store.commit('startSolving')
+      // console.log(this.$store.state)
+      // this.$store.commit('startSolving')
+      // let s = new Solver({
+      //   width: this.$store.state.grid.width,
+      //   height: this.$store.state.grid.height, 
+      //   cells: this.$store.state.grid.cells, 
+      //   start: this.$store.state.grid.startCell, 
+      //   end: this.$store.state.grid.endCell
+      // })
+      // console.log('got this far')
+      // let grid = s.solveGrid()
+      // console.log(grid)
+      // this.$store.commit('solve', {newGrid: grid})
+      this.$store.commit('startSolving')
+      this.$nextTick(function() {
+        setTimeout(() => {
+
+          this.$store.dispatch('wholeProcess')
+        }, 0)
       })
-      s.solveGrid()
-      this.loadingStates.solving = false
+
+      // this.$store.commit('stopSolving')
       // for (let i = s.path.length - 1; i >= 0;  i--) {
       //   s.path[i].isPath = true;
       //   console.log(s.path[i].id.toString())
       //   document.querySelector(`div[data-id="${s.path[i].id}"]`).style.background = 'green' 
       // }
+      // this.$store.commit('stopSolving')
     },
     gimmeCell(event, cell) {
       cell.hasObstacle = true
@@ -202,8 +218,9 @@ export default {
       let cells = this.setCells()
       
       let [startCell, endCell] = this.findStartAndEnd(cells)
-      let grid = reactive({cells: cells, startCell: startCell, endCell: endCell, height: height, width: width})
-      this.grid = grid
+      let grid = {cells: cells, startCell: startCell, endCell: endCell, height: height, width: width}
+      console.log(grid)
+      this.$store.commit('setGrid', {newGrid: grid})
       this.mazeUpdater++
 
     },

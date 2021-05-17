@@ -45,8 +45,8 @@ export default class Solver {
     if (endNode.isStart) {
       endNode.isPath = true;
       this.path.unshift(endNode);
-
-      return this.grid;
+      // let g = this.grid;
+      return;
     }
     if (endNode.previous) {
       endNode.isPath = true;
