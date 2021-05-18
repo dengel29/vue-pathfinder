@@ -4,17 +4,12 @@
     <transition-group
       appear
       name="grid"
-      @before-enter="beforeEnter"
-      @enter="enter"
-      @after-enter="afterEnter"
-
       :style="gridStyles"
-      :key="mazeUpdater"
-      v-if="mazeUpdater > 0"
+      
       class="grid-container"
       tag="div"
       >
-    <div
+    <!-- <div
         class="cell"
         v-for="cell in grid.cells"
         @mouseenter.ctrl="gimmeCell($event, cell)"
@@ -25,7 +20,15 @@
         :data-type="cell.type"
         :class="[cell.hasObstacle ? hasObstacle : '']"
         >
-    </div>
+    </div> -->
+    <CellComp
+      ref="cells"
+      v-for="cell in cells"
+      :key="cell"
+      :id="cell.id"
+      :cell="cell"
+      :type="cell.type"
+    />
   </transition-group>
   <!-- </div> -->
   <br>
@@ -46,24 +49,18 @@
   <button @click="solveMaze">solve</button>
   <button @click="setNotPossible">possible?</button>
   <button @click="toggleLoading">sloving?</button>
-    <!-- <label for="width" >
-      enter a maze width
-      <input type="number" name="width" ref="heightinput">
-
-    </label>
-    <label for="height" >
-      enter a maze height
-      <input type="number" name="height" ref="heightinput">
-    </label> -->
-    <!-- <button @click="submitMazeDimensions"></button> -->
 </template>
 
 <script>
 import Cell from '../utils/Cell'
-import gsap from 'gsap'
+// import gsap from 'gsap'
+import CellComp from './Cell'
 
 export default {
   name: 'Grid',
+  components: {
+    CellComp
+  },
   data: function() {
     return {
       mazeUpdater: 0,
@@ -90,10 +87,13 @@ export default {
     grid() {
       return this.$store.state.grid
     },
+    cells() {
+      return this.$store.state.grid.cells
+    },
   },
   setup: () => {
-    const width = 50
-    const height = 50;
+    const width = 20
+    const height = 20;
     var count = 200
     let setCells = () => {
       let cells=[];
@@ -109,75 +109,75 @@ export default {
       count = 200
       return cells
     };
-    let beforeEnter = (el) => {
+    // let beforeEnter = (el) => {
       
-      el.style.backgroundColor = `rgba(${Number(el.dataset.x) * 4.5}, ${Number(el.dataset.y)* 2.5}, ${Math.floor(Number(el.dataset.id)/10)})`
-      el.style.height = '0px'
-    };
-    let enter = (el, done) => {
-      const type = el.dataset.type
-      switch (type) {
-        case 'obstacle':
-          gsap.to(el, {
-          background: 'red',
-          height: "100%",
-          delay: el.dataset.id * Math.random() / 1000,
-          onComplete: done
-        });
-        break;
-        case 'normal':
-          gsap.to(el, {
-            background: 'white',
-          height: "100%",
-          delay: el.dataset.id * Math.random() / 1000,
-          onComplete: done
-        });
-        break;
-         case 'start':
-          gsap.to(el, {
-          background: 'lightgreen',
-          height: "100%",
-          delay: el.dataset.id * Math.random() / 1000,
-          onComplete: done
-        });
-        break;
-          case 'end':
-          gsap.to(el, {
-            background: 'darkslateblue',
-          height: "100%",
-          delay: el.dataset.id * Math.random() / 1000,
-          onComplete: done
-        });
-        break;
-          case 'path':
-            gsap.to(el, {
-            background: 'green',
-            height: "100%",
-            delay: el.dataset.id * Math.random() / 1000,
-            onComplete: done
-          });
+    //   el.style.backgroundColor = `rgba(${Number(el.dataset.x) * 4.5}, ${Number(el.dataset.y)* 2.5}, ${Math.floor(Number(el.dataset.id)/10)})`
+      // el.style.height = '0px'
+    // };
+    // let enter = (el, done) => {
+    //   const type = el.dataset.type
+    //   console.log(el)
+    //   switch (type) {
+    //     case 'obstacle':
+    //       gsap.to(el, {
+    //       background: 'red',
+    //       height: "5px",
+    //       delay: el.dataset.id * Math.random() / 1000,
+    //       onComplete: done
+    //     });
+    //     break;
+    //     case 'normal':
+    //       gsap.to(el, {
+    //         background: 'white',
+    //       height: "5px",
+    //       delay: el.dataset.id * Math.random() / 1000,
+    //       onComplete: done
+    //     });
+    //     break;
+    //      case 'start':
+    //       gsap.to(el, {
+    //       background: 'lightgreen',
+    //       height: "5px",
+    //       delay: el.dataset.id * Math.random() / 1000,
+    //       onComplete: done
+    //     });
+    //     break;
+    //       case 'end':
+    //       gsap.to(el, {
+    //         background: 'darkslateblue',
+    //       height: "5px",
+    //       delay: el.dataset.id * Math.random() / 1000,
+    //       onComplete: done
+    //     });
+    //     break;
+    //       case 'path':
+    //         gsap.to(el, {
+    //         background: 'green',
+    //         height: "5px",
+    //         delay: el.dataset.id * Math.random() / 1000,
+    //         onComplete: done
+    //       });
           
-      }
-    };
-    let afterEnter = (el, done) => {
-        console.log('after entered')
-        const type = el.dataset.type
-        if (type ==='path') {
-          gsap.to(el, {
-            background: 'green',
-            height: "100%",
-            delay: el.dataset.id * Math.random() / 1000,
-            onComplete: done
-          });
-        }
-    };
-    let leave = (el, done) => {
-      gsap.to(el, {
-        background: 'green',
-        delay: el.dataset.id * 0.95,
-        onComplete: done
-      })
-    };
+    //   }
+    // };
+    // let afterEnter = (el, done) => {
+    //     const type = el.dataset.type
+    //     if (type ==='path') {
+    //       gsap.to(el, {
+    //         background: 'green',
+    //         height: "100%",
+    //         delay: el.dataset.id * Math.random() / 1000,
+    //         onComplete: done
+    //       });
+    //     }
+    // };
+    // let leave = (el, done) => {
+    //   gsap.to(el, {
+    //     background: 'green',
+    //     delay: el.dataset.id * 0.95,
+    //     onComplete: done
+    //   })
+    // };
 
     let findStartAndEnd = (cells) => {
       let edgeCells = cells.filter(
@@ -203,24 +203,10 @@ export default {
       endCell.hasObstacle = false;
       return [startCell, endCell];
     };
-    return {  findStartAndEnd, setCells, beforeEnter, enter, leave, afterEnter }
+    return {  findStartAndEnd, setCells }
   },
   mounted: function() {
   },  
-  updated: function() {
-    // let afterUpdate = (el, done) => {
-    //   gsap.to(el, {
-    //       background: 'green',
-    //       height: "100%",
-    //       delay: el.dataset.id * Math.random() / 1000,
-    //       onComplete: done
-    //     });
-    // }
-    // afterUpdate()
-  },
-  // watch: function(grid, previousGrid) {
-  //   console.log(grid)
-  // },
   methods: {
     setNotPossible: function() {
       this.$store.state.notPossible ? this.$store.commit('resetPossibility') : this.$store.commit('impossibleMaze')
@@ -247,14 +233,14 @@ export default {
       
     },
     createRandomGrid: function() {
-      const width = 50
-      const height = 50;
+      const width = 20
+      const height = 20;
       let cells = this.setCells()
       
       let [startCell, endCell] = this.findStartAndEnd(cells)
       let grid = {cells: cells, startCell: startCell, endCell: endCell, height: height, width: width}
       this.$store.commit('setGrid', {newGrid: grid})
-      this.mazeUpdater++
+      console.log(this.cells)
 
     },
     setMazeDimensions: function() {
@@ -273,8 +259,8 @@ export default {
     /* grid-gap: 5px; */
     grid-template-columns: var(--grid-width);
     grid-template-rows: var(--grid-height);
-    width:80%;
-    height:80vh;
+    width:70%;
+    height:70vh;
     margin: 0 auto;
   }
   .cell {
@@ -282,18 +268,13 @@ export default {
     width:auto;
     height:auto;
     /* border:1px solid black; */
-    display:grid;
+    /* display:grid; */
     font-size: 5px;
     margin: 0;
   }
 
   p {
     margin: 0;
-  }
-
-  .obstacle {
-    /* border:1px solid black; */
-    background-color:red
   }
   .message {
     border: 1px solid red
