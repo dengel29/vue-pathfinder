@@ -9,6 +9,7 @@ export default class Cell {
     this.isEnd = false;
     this.isPath = false;
     this.visited = false;
+    this.type = "normal";
   }
 
   static findByCoordinates(cells, x, y) {

@@ -44,12 +44,14 @@ export default class Solver {
   printSolution = (endNode) => {
     if (endNode.isStart) {
       endNode.isPath = true;
+      // endNode.type = "path";
       this.path.unshift(endNode);
-      // let g = this.grid;
+      this.grid.path = this.path;
       return;
     }
     if (endNode.previous) {
       endNode.isPath = true;
+      endNode.type = "path";
       this.path.unshift(endNode);
       this.count++;
       this.printSolution(endNode.previous);

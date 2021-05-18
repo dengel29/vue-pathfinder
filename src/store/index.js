@@ -5,7 +5,9 @@ const store = createStore({
   state() {
     return {
       grid: { width: 50, height: 50 },
+      path: null,
       isSolving: false,
+      notPossible: false,
     };
   },
   mutations: {
@@ -19,21 +21,32 @@ const store = createStore({
     },
     setGrid(state, payload) {
       state.grid = payload.newGrid;
+      this.commit("resetPossibility");
     },
+    // setPath(state, payload) {
+    //   state.path = payload.path;
+    // },
     solve(state, payload) {
       state.grid = payload.newGrid;
+    },
+    impossibleMaze(state) {
+      state.notPossible = true;
+    },
+    resetPossibility(state) {
+      state.notPossible = false;
     },
   },
   actions: {
     startSolvingProcess({ commit }) {
       return new Promise((resolve) => {
+        commit("resetPossibility");
         commit("startSolving");
         resolve();
       });
     },
     solveGrid({ dispatch, commit }) {
       return dispatch("startSolvingProcess").then(() => {
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
           let s = new Solver({
             width: this.state.grid.width,
             height: this.state.grid.height,
@@ -42,14 +55,18 @@ const store = createStore({
             end: this.state.grid.endCell,
           });
           s.solveGrid();
-          let grid = s.grid;
-          commit("solve", { newGrid: grid });
-          resolve();
+          if (s.path.length > 0) {
+            commit("solve", { newGrid: s.grid });
+            resolve();
+          } else {
+            commit("impossibleMaze");
+            reject("Maze cannot be solved");
+          }
         });
       });
     },
     wholeProcess({ dispatch, commit }) {
-      return dispatch("solveGrid").then(() => {
+      return dispatch("solveGrid").finally(() => {
         commit("stopSolving");
       });
     },
