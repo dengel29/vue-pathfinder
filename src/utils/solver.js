@@ -27,12 +27,15 @@ export default class Solver {
         let nextCell = this.grid.cells.find(
           (c) => c.x === n[0] && c.y === n[1]
         );
-        if (nextCell.hasObstacle || nextCell.visited) {
+        if ((nextCell && nextCell.hasObstacle) || nextCell.visited) {
           continue;
+        } else if (nextCell) {
+          nextCell.previous = previousNode;
+          nextCell.visited = true;
+          this.queue.enqueue(nextCell);
+        } else {
+          return "Not possible";
         }
-        nextCell.previous = previousNode;
-        nextCell.visited = true;
-        this.queue.enqueue(nextCell);
       }
       if (this.queue.length === 0) {
         return "Not possible";
@@ -45,6 +48,7 @@ export default class Solver {
     if (endNode.isStart) {
       endNode.isPath = true;
       // endNode.type = "path";
+      endNode.pathId = this.count;
       this.path.unshift(endNode);
       this.grid.path = this.path;
       return;
@@ -52,6 +56,7 @@ export default class Solver {
     if (endNode.previous) {
       endNode.isPath = true;
       endNode.type = "path";
+      endNode.pathId = this.count;
       this.path.unshift(endNode);
       this.count++;
       this.printSolution(endNode.previous);
