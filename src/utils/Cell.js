@@ -33,7 +33,6 @@ export default class Cell {
     for (let i = 0; i < 4; i++) {
       let newXPosition = this.x + xMoves[i];
       let newYPosition = this.y + yMoves[i];
-
       if (
         newXPosition < 0 ||
         newYPosition < 0 ||

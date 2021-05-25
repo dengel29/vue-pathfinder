@@ -1,9 +1,5 @@
 <template>
   <div class="cell-container" :class="classObject">
-    <!-- <div class="right"></div>
-    <div class="front">
-      
-    </div> -->
     </div>
 </template>
 

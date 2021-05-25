@@ -1,13 +1,15 @@
 <template>
-  <Grid/>
+  <Wrapper :solved="this.$store.state.solved" :not-possible="this.$store.state.notPossible"/>
 </template>
 
 <script>
-import Grid from './components/Grid.vue'
+import Wrapper from './components/Wrapper.vue'
 export default {
   name: 'App',
   components: {
-    Grid
+    Wrapper 
+  }, mounted: function() {
+    document.title = 'Vue Pathfinder Algorithm'
   }
 }
 </script>
@@ -18,12 +20,10 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
-  margin-top: 4%;
 }
 body {
   margin:0;
   padding: 0;
-  background-color: slategray
+  background: -webkit-linear-gradient(bottom, rgb(17, 24, 39), rgb(84, 80, 76));
 }
 </style>

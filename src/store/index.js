@@ -7,7 +7,9 @@ const store = createStore({
       grid: { width: 50, height: 50 },
       path: null,
       isSolving: false,
+      solved: false,
       notPossible: false,
+      onAbout: false,
     };
   },
   mutations: {
@@ -22,15 +24,22 @@ const store = createStore({
     setGrid(state, payload) {
       state.grid = payload.newGrid;
       this.commit("resetPossibility");
+      this.commit("resetSolved");
     },
-    // setPath(state, payload) {
-    //   state.path = payload.path;
-    // },
+    toggleAbout(state) {
+      state.onAbout = !state.onAbout;
+    },
+    isSolved(state) {
+      state.solved = true;
+    },
     solve(state, payload) {
       state.grid = payload.newGrid;
     },
     impossibleMaze(state) {
       state.notPossible = true;
+    },
+    resetSolved(state) {
+      state.solved = false;
     },
     resetPossibility(state) {
       state.notPossible = false;
@@ -57,6 +66,7 @@ const store = createStore({
           s.solveGrid();
           if (s.path.length > 0) {
             commit("solve", { newGrid: s.grid });
+            commit("isSolved");
             resolve();
           } else {
             commit("impossibleMaze");
