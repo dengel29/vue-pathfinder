@@ -90,7 +90,7 @@ export default {
         }
       };
       let afterEnter = (el, done) => {
-          console.log('after entered')
+          
           const type = el.dataset.type
           if (type ==='path') {
             gsap.to(el, {

@@ -126,7 +126,6 @@ export default {
     const height = 25;
     var count = 0
     let setCells = (w, h) => {
-      console.log('what')
       let cells=[];
       for(let i=0;i<h;i++) {
         for(let j=0;j<w;j++) {

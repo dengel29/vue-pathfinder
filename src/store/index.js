@@ -14,11 +14,9 @@ const store = createStore({
   },
   mutations: {
     startSolving(state) {
-      console.log("hey i started solving");
       state.isSolving = true;
     },
     stopSolving(state) {
-      console.log("yo i'm done ended solving");
       state.isSolving = false;
     },
     setGrid(state, payload) {

@@ -24,9 +24,9 @@ export default {
     }
   }, watch: {
     solved() {
-      console.log("changed", this.$store.state.solved)
+      
       if (this.$store.state.notPossible) {
-        console.log('not possible')
+        
         gsap.to(this.$refs.banner, { 
           duration: 1.5,
           backgroundPosition: '0px 100%'
@@ -60,5 +60,6 @@ export default {
     display:flex;
     justify-content: right;
     padding-right:1em;
+     padding-left:1em;
   }
 </style>
