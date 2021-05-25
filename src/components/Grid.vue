@@ -129,7 +129,7 @@ export default {
       let cells=[];
       for(let i=0;i<h;i++) {
         for(let j=0;j<w;j++) {
-          let hasObstacle=Math.floor(Math.random()*3)===1? true:false;
+          let hasObstacle=Math.floor(Math.random()*4)===1? true:false;
           let cell= new Cell(j, i, hasObstacle, count);
           cell.hasObstacle ? cell.type = "obstacle" : cell.type = "normal"
           cells.push(cell);
