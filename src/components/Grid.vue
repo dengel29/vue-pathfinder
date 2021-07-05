@@ -4,7 +4,7 @@
   @enter="aboutEnter" 
   @leave="aboutLeave" mode="out-in">
   <div v-if="navigatedToAbout" style="color: white; max-width: 55ch; margin: 0 auto; height:20vh" :key="1">
-    <p> This is an exploration of a simple depth-first pathfinding algorithm by me, Dan Engel. I initially wrote the algorithim in plain javascript then ported it over to Vue 3 to get it running in the browser. Animations are done with the help of Green Sock and state is managed with the help of Vuex. Is that overkill? Probably. But it was a nice way to learn the tools.</p> 
+    <p> This is an exploration of a simple breadth-first pathfinding algorithm by me, Dan Engel. I initially wrote the algorithim in plain javascript then ported it over to Vue 3 to get it running in the browser. Animations are done with the help of Green Sock and state is managed with the help of Vuex. Is that overkill? Probably. But it was a nice way to learn the tools.</p> 
     <br>
     <p>The code is available <a target="_blank" href="https://github.com/dengel29/">here</a> and my personal website is <a target="_blank" href="https://dan-engel.fyi">here</a> .</p>
   </div>
